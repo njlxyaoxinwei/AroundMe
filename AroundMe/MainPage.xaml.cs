@@ -8,6 +8,8 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using AroundMe.Resources;
+using System.Device.Location;
+using Windows.Devices.Geolocation;
 
 namespace AroundMe
 {
@@ -20,6 +22,28 @@ namespace AroundMe
 
             // Sample code to localize the ApplicationBar
             //BuildLocalizedApplicationBar();
+
+            Loaded += MainPage_Loaded;
+        }
+
+        void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateMap();
+        }
+
+        private async void UpdateMap()
+        {
+            //AroundMeMap.SetView(new GeoCoordinate(41.8988D, -87.6231D), 17D);
+            Geolocator geolocator = new Geolocator();
+            geolocator.DesiredAccuracyInMeters = 50;
+            Geoposition position =
+                await geolocator.GetGeopositionAsync(TimeSpan.FromMinutes(1), TimeSpan.FromSeconds(30));
+
+            var gpsCoorCenter =
+                new GeoCoordinate(position.Coordinate.Latitude, position.Coordinate.Longitude);
+            AroundMeMap.SetView(gpsCoorCenter, 17D);
+
+
         }
 
         // Sample code for building a localized ApplicationBar
