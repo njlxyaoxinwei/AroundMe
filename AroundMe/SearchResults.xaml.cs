@@ -9,6 +9,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
+using AroundMe.Core;
 
 namespace AroundMe
 {
@@ -16,7 +17,7 @@ namespace AroundMe
     {
         private double _latitude;
         private double _longitude;
-        private const string flickrApiKey = "8bc58aadfa85d0fb22f0e820f4df93fc";
+        private string flickrApiKey = PD.getKey();
         private string _topic;
         private double _radius;
         public SearchResults()
@@ -57,7 +58,7 @@ namespace AroundMe
             ApplicationBar.Buttons.Add(appBarButton);
         }
 
-        private void appBarButton_Click(object sender, EventArgs e)
+        private async void appBarButton_Click(object sender, EventArgs e)
         {
             List<FlickrImage> imgs = new List<FlickrImage>();
 
@@ -73,7 +74,7 @@ namespace AroundMe
             //Save new list
             LockscreenHelpers.SaveSelectedBackgroundScreens(imgs);
             //Randomly select one item as lockscreen
-            LockscreenHelpers.SetRandomImageFromLocalStorage();
+            await LockscreenHelpers.SetRandomImageFromLocalStorage();
 
             MessageBox.Show("You have a new background!", "Set!",MessageBoxButton.OK);
 

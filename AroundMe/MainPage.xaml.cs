@@ -12,6 +12,7 @@ using System.Device.Location;
 using Windows.Devices.Geolocation;
 using System.Net.Http;
 using Newtonsoft.Json;
+using Microsoft.Phone.Maps;
 //using System.Windows.Media.Imaging;
 
 namespace AroundMe
@@ -63,14 +64,9 @@ namespace AroundMe
                 AroundMeMap.ZoomLevel = 15;
                 SetProgressIndicator(false);
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception)
             {
                 MessageBox.Show("Location is disabled in phone settings.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            
             }
 
         }
@@ -98,6 +94,13 @@ namespace AroundMe
             string navTo = string.Format("/SearchResults.xaml?latitude={0}&longitude={1}&topic={2}&radius={3}",AroundMeMap.Center.Latitude, AroundMeMap.Center.Longitude, topic,5);
             //the radius is actually hard-coded to be 5km
             NavigationService.Navigate(new Uri(navTo, UriKind.RelativeOrAbsolute));
+        }
+
+        private void AroundMeMap_Loaded(object sender, RoutedEventArgs e)
+        {
+          // Need the following info to submit to store.
+            MapsSettings.ApplicationContext.ApplicationId = PD.getId();
+            MapsSettings.ApplicationContext.AuthenticationToken = PD.getToken();
         }
     }
 

@@ -7,6 +7,7 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using AroundMe.Resources;
+using Microsoft.Phone.Scheduler;
 
 namespace AroundMe
 {
@@ -39,7 +40,7 @@ namespace AroundMe
             if (Debugger.IsAttached)
             {
                 // Display the current frame rate counters.
-                Application.Current.Host.Settings.EnableFrameRateCounter = true;
+                //Application.Current.Host.Settings.EnableFrameRateCounter = true;
 
                 // Show the areas of the app that are being redrawn in each frame.
                 //Application.Current.Host.Settings.EnableRedrawRegions = true;
@@ -61,6 +62,18 @@ namespace AroundMe
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            string taskName = "AroundMeLockscreenChanger";
+
+            PeriodicTask oldTask = ScheduledActionService.Find(taskName) as PeriodicTask;
+            if (oldTask != null)
+            {
+                ScheduledActionService.Remove(taskName);
+
+            }
+            PeriodicTask task = new PeriodicTask(taskName);
+            task.Description = "Change lockscreen wallpaper"; //visible to end-user in settings
+            ScheduledActionService.Add(task);
+            //ScheduledActionService.LaunchForTest(task.Name, TimeSpan.FromSeconds(10));
         }
 
         // Code to execute when the application is activated (brought to foreground)

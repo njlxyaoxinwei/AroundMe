@@ -10,9 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Phone.System.UserProfile;
 
-namespace AroundMe
+namespace AroundMe.Core
 {
-    class LockscreenHelpers
+    public class LockscreenHelpers
     {
         private const string BackgroundRoot = "Images/";
         private const string IconRoot = "Shared/ShellContent/";
@@ -59,7 +59,7 @@ namespace AroundMe
             }
             
         }
-        public static void SetRandomImageFromLocalStorage()
+        public static async Task SetRandomImageFromLocalStorage()
         {
             string fileData;
             using (IsolatedStorageFile storageFolder = IsolatedStorageFile.GetUserStoreForApplication())
@@ -82,10 +82,10 @@ namespace AroundMe
                 Random rndNumber = new Random();
                 int index = rndNumber.Next(images.Count);
                 //set img as lockscreen
-                SetImage(images[index].Image1024);
+                await SetImage(images[index].Image1024);
             } 
         }
-        public static async void SetImage(Uri uri)
+        public static async Task SetImage(Uri uri)
         {
             string fileName = uri.Segments[uri.Segments.Length - 1];
             string imageName = BackgroundRoot + fileName;
@@ -110,9 +110,9 @@ namespace AroundMe
 
             }
             //set the lockscreen
-            SetLockscreen(fileName);
+            await SetLockscreen(fileName);
         }
-        private static async void SetLockscreen(string fileName)
+        private static async Task SetLockscreen(string fileName)
         {
             bool hasAccessForLockscreen = LockScreenManager.IsProvidedByCurrentApplication;
             if (!hasAccessForLockscreen)
@@ -131,7 +131,7 @@ namespace AroundMe
 
             if (mainTile != null)
             {
-                Uri iconUri = new Uri("isostore:/" + IconRoot + fileName, UriKind.Absolute);
+                Uri iconUri = new Uri("isostore:/" + IconRoot + fileName, UriKind.Absolute);//need to use isostore for non-Windows API
                 var imgs = new List<Uri>();
                 imgs.Add(iconUri);
                 CycleTileData tileData = new CycleTileData();
