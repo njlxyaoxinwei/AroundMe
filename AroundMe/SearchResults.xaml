@@ -14,6 +14,19 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
 
+
+    <phone:PhoneApplicationPage.Resources>
+    
+        <DataTemplate x:Key="ImageTemplate">
+            <Image Name="img"
+                               Source="{Binding Image320}"
+                               Stretch="UniformToFill"
+                               Opacity="0"
+                               ImageOpened="Image_ImageOpened"/>
+
+        </DataTemplate>
+
+    </phone:PhoneApplicationPage.Resources>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
@@ -29,19 +42,24 @@
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <toolkit:LongListMultiSelector LayoutMode="Grid"
+            <TextBlock x:Name="NoPhotosFound"
+                       Visibility="Collapsed"
+                       Style="{StaticResource PhoneTextTitle2Style}"
+                       Text="No photos found :("/>
+            <toolkit:LongListMultiSelector x:Name="PhotosForLockscreen"
+                                           LayoutMode="Grid"
                                            GridCellSize="105,105"
                                            ItemsSource="{Binding}"
                                            EnforceIsSelectionEnabled="True"
-                                           SelectionChanged="PhotosForLockscreen_SelectionChanged">
-                <toolkit:LongListMultiSelector.ItemTemplate>
-                    <DataTemplate>
-                        <Image Source="{Binding Image320}"
-                               Stretch="UniformToFill"/>
-                        
-                    </DataTemplate>
-                </toolkit:LongListMultiSelector.ItemTemplate>
+                                           SelectionChanged="PhotosForLockscreen_SelectionChanged"
+                                           ItemTemplate="{StaticResource ImageTemplate}">
+ 
             </toolkit:LongListMultiSelector>
+            
+            <StackPanel x:Name="Overlay" VerticalAlignment="Center" Visibility="Collapsed">
+                <TextBlock HorizontalAlignment="Center" Text="Loading..."/>
+                <ProgressBar x:Name="OverlayProgressBar" IsIndeterminate="True"/>
+            </StackPanel>
                                     
         </Grid>
     </Grid>
