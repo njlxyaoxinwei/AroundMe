@@ -12,7 +12,7 @@ using System.Device.Location;
 using Windows.Devices.Geolocation;
 using System.Net.Http;
 using Newtonsoft.Json;
-using System.Windows.Media.Imaging;
+//using System.Windows.Media.Imaging;
 
 namespace AroundMe
 {
@@ -31,7 +31,14 @@ namespace AroundMe
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            SystemTray.ProgressIndicator = new ProgressIndicator();
             UpdateMap();
+        }
+
+        private static void SetProgressIndicator(bool isVisible)
+        {
+            SystemTray.ProgressIndicator.IsIndeterminate = isVisible;
+            SystemTray.ProgressIndicator.IsVisible = isVisible;
         }
 
         private async void UpdateMap()
@@ -39,15 +46,32 @@ namespace AroundMe
             //AroundMeMap.SetView(new GeoCoordinate(41.8988D, -87.6231D), 17D);
             Geolocator geolocator = new Geolocator();
             geolocator.DesiredAccuracyInMeters = 50;
-            Geoposition position =
-                await geolocator.GetGeopositionAsync(TimeSpan.FromMinutes(1), TimeSpan.FromSeconds(30));
 
-            var gpsCoorCenter =
-                new GeoCoordinate(position.Coordinate.Latitude, position.Coordinate.Longitude);
+            SetProgressIndicator(true);
+            SystemTray.ProgressIndicator.Text = "Getting GPS Location";
 
-            AroundMeMap.Center = gpsCoorCenter;
-            AroundMeMap.ZoomLevel = 15;
+            try
+            {
+                Geoposition position =
+                    await geolocator.GetGeopositionAsync(TimeSpan.FromMinutes(1), TimeSpan.FromSeconds(30));
 
+                SystemTray.ProgressIndicator.Text = "Acquired";
+                var gpsCoorCenter =
+                    new GeoCoordinate(position.Coordinate.Latitude, position.Coordinate.Longitude);
+
+                AroundMeMap.Center = gpsCoorCenter;
+                AroundMeMap.ZoomLevel = 15;
+                SetProgressIndicator(false);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show("Location is disabled in phone settings.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            
+            }
 
         }
 

@@ -43,6 +43,11 @@ namespace AroundMe
 
         }
 
+        private void PhotosForLockscreen_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
 
     }
 }
