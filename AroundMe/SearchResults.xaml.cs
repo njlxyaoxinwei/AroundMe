@@ -15,6 +15,8 @@ namespace AroundMe
         private double _latitude;
         private double _longitude;
         private const string flickrApiKey = "8bc58aadfa85d0fb22f0e820f4df93fc";
+        private string _topic;
+        private double _radius;
         public SearchResults()
         {
             InitializeComponent();
@@ -24,7 +26,7 @@ namespace AroundMe
         async void SearchResults_Loaded(object sender, RoutedEventArgs e)
         {
             // LocationTextBlock.Text = string.Format("Location: {0} & {1}", _latitude, _longitude);
-            var images = await FlickrImage.GetFlickrImages(flickrApiKey, _latitude, _longitude);
+            var images = await FlickrImage.GetFlickrImages(flickrApiKey, _topic, _latitude, _longitude, _radius);
             DataContext = images;
 
         }
@@ -35,6 +37,8 @@ namespace AroundMe
 
             _latitude = Convert.ToDouble(NavigationContext.QueryString["latitude"]);
             _longitude = Convert.ToDouble(NavigationContext.QueryString["longitude"]);
+            _topic = NavigationContext.QueryString["topic"];
+            _radius = Convert.ToDouble(NavigationContext.QueryString["radius"]);
 
 
         }

@@ -15,13 +15,14 @@ namespace AroundMe
         public Uri Image1024 { get; set; }
 
         public async static Task<List<FlickrImage>> GetFlickrImages(
-            string flickrApiKey, 
+            string flickrApiKey, string topic,
             double latitude = double.NaN, 
-            double longitude = double.NaN)
+            double longitude = double.NaN,
+            double radius = double.NaN)
         {
             HttpClient client = new HttpClient();
 
-            var baseUrl = getBaseUrl(flickrApiKey, latitude, longitude);
+            var baseUrl = getBaseUrl(flickrApiKey, topic, latitude, longitude, radius);
             string flickrResult = await client.GetStringAsync(baseUrl);
             //ResultTextBlock.Text = flickrResult;
             FlickrData apidata = JsonConvert.DeserializeObject<FlickrData>(flickrResult);
@@ -46,9 +47,10 @@ namespace AroundMe
         }
 
         private static string getBaseUrl(
-            string flickrApiKey, 
+            string flickrApiKey, string topic,
             double latitude = double.NaN, 
-            double longitude = double.NaN)
+            double longitude = double.NaN,
+            double radius = double.NaN)
         {
             //Licenses:
             //http://www.flickr.com/services/api/flickr.photos.licenses.getinfo.html
@@ -72,12 +74,19 @@ namespace AroundMe
             "?method=flickr.photos.search" +
             "&license={0}" +
             "&api_key={1}" +
-            "&lat={2}" +
-            "&lon={3}" +
-            "&radius=2" +
+ //           "&lat={2}" +
+   //         "&lon={3}" +
+    //        "&text={4}"+
+    //        "&radius={5}" + 
             "&format=json" +
             "&nojsoncallback=1";
-            var baseUrl = string.Format(url, license, flickrApiKey, latitude, longitude);
+            var baseUrl = string.Format(url, license, flickrApiKey);
+            if (!string.IsNullOrWhiteSpace(topic))
+                baseUrl += string.Format("&text=%22{0}%22", topic);
+            if (!double.IsNaN(latitude) && !double.IsNaN(longitude))
+                baseUrl += string.Format("&lat={0}&lon={1}", latitude, longitude);
+            if (!double.IsNaN(radius))
+                baseUrl += string.Format("&radius{0}", radius);
             return baseUrl;
 
         }

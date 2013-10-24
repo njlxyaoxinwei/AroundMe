@@ -70,8 +70,9 @@ namespace AroundMe
 
         private void SearchClick(object sender, EventArgs e)
         {
-            string navTo = string.Format("/SearchResults.xaml?latitude={0}&longitude={1}",AroundMeMap.Center.Latitude, AroundMeMap.Center.Longitude);
-
+            string topic = HttpUtility.UrlEncode(SearchTopic.Text);
+            string navTo = string.Format("/SearchResults.xaml?latitude={0}&longitude={1}&topic={2}&radius={3}",AroundMeMap.Center.Latitude, AroundMeMap.Center.Longitude, topic,5);
+            //the radius is actually hard-coded to be 5km
             NavigationService.Navigate(new Uri(navTo, UriKind.RelativeOrAbsolute));
         }
     }
